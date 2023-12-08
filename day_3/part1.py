@@ -8,9 +8,6 @@ def main():
     with open('./day_3/input.txt', 'r') as f:
         rawPartNumbers = f.readlines()
     
-    print(len(rawPartNumbers[0]))
-
-    
     for i in range(len(rawPartNumbers)):
         foundNumber = False
         for j in range(len(rawPartNumbers[i])):
