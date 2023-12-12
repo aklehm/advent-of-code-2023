@@ -3,8 +3,8 @@
 def main():
     rawPartNumbers = list()
     positions = list()
-    partNumbers = list()
     gearPositions = list()
+    gearRatios = list()
 
     with open('./day_3/input.txt', 'r') as f:
         rawPartNumbers = f.readlines()
@@ -22,11 +22,14 @@ def main():
                     foundNumber = True
             else:
                 foundNumber = False
-    foundPositions = list()
+    
 
-    # print(gearPositions)
-
-
+    for i in range(len(positions)):
+        pnum = ''
+        for j in positions[i][1]:
+            pnum = pnum + rawPartNumbers[positions[i][0]][j]
+        positions[i].append(pnum)
+    
 
     for gear in gearPositions:
         leadingGearPos = None
@@ -61,7 +64,6 @@ def main():
             lowerGearPos[1].append(gear[1])
             possibleNumPos.append([gear[0]+1, gear[1]])
 
-            # if i == (len(position[1])-1):
         if trailingGearPos != None:
             if upperGearPos:
                 upperGearPos[1].append(trailingGearPos[1])
@@ -70,51 +72,56 @@ def main():
                 lowerGearPos[1].append(trailingGearPos[1])
                 possibleNumPos.append([gear[0]+1, trailingGearPos[1]])
         
-        print(possibleNumPos)
+        foundcounter = 0
+        foundNumbers = list()
 
-        foundnumbers = 0
-        for numPos in possibleNumPos:
-            if rawPartNumbers[numPos[0]][numPos[1]].isnumeric():
-                foundnumbers += 1
+
+        if leadingGearPos:
+            if  rawPartNumbers[leadingGearPos[0]][leadingGearPos[1]].isnumeric():
+                foundcounter += 1
+                for pos in positions:
+                    if leadingGearPos[0] == pos[0] and leadingGearPos[1] == pos[1][-1]:
+                        foundNumbers.append(pos[2])
         
-        print(foundnumbers)
+        if trailingGearPos:
+            if rawPartNumbers[trailingGearPos[0]][trailingGearPos[1]].isnumeric():
+                foundcounter += 1
+                for pos in positions:
+                    if trailingGearPos[0] == pos[0] and trailingGearPos[1] == pos[1][0]:
+                        foundNumbers.append(pos[2])
+        
+        foundUpper = list()
+        if upperGearPos:
+            for u in upperGearPos[1]:
+                if rawPartNumbers[upperGearPos[0]][u].isnumeric():
+                    for pos in positions:
+                        if upperGearPos[0] == pos[0]:
+                            for i in pos[1]:
+                                if u == i and pos[2] not in foundUpper:
+                                    foundUpper.append(pos[2])
 
+        foundLower = list()
+        if lowerGearPos:
+            for l in lowerGearPos[1]:
+                if rawPartNumbers[lowerGearPos[0]][l].isnumeric():
+                    for pos in positions:
+                        if lowerGearPos[0] == pos[0]:
+                            for i in pos[1]:
+                                if l == i and pos[2] not in foundLower:
+                                    foundLower.append(pos[2])
+        
+        
+        for i in foundUpper:
+            foundNumbers.append(i)
+
+        for i in foundLower:
+            foundNumbers.append(i)
         
 
-        # if leadingGearPos != None:
-        #     if rawPartNumbers[leadingGearPos[0]][leadingGearPos[1]] != '.' and not rawPartNumbers[leadingGearPos[0]][leadingGearPos[1]].isnumeric():
-        #         foundPositions.append(gear)
-        #         pnum = ''
-        #         for i in gear[1]:
-        #             pnum = pnum + rawPartNumbers[position[0]][i]
-        #         partNumbers.append(int(pnum))
-        # if trailingGearPos != None:
-        #     if rawPartNumbers[trailingGearPos[0]][trailingGearPos[1]] != '.' and not rawPartNumbers[trailingGearPos[0]][trailingGearPos[1]].isnumeric():
-        #         foundPositions.append(gear)
-        #         pnum = ''
-        #         for i in position[1]:
-        #             pnum = pnum + rawPartNumbers[position[0]][i]
-        #         partNumbers.append(int(pnum))
-        # if upperPos:
-        #     for i in upperPos[1]:
-        #         pnum = ''
-        #         if rawPartNumbers[upperPos[0]][i] != '.' and not rawPartNumbers[upperPos[0]][i].isnumeric():
-        #             foundPositions.append(position)
-        #             for j in position[1]:
-        #                 pnum = pnum + rawPartNumbers[position[0]][j]
-        #         if pnum != '':
-        #             partNumbers.append(int(pnum))
-        # if lowerPos:
-        #     for i in lowerPos[1]:
-        #         pnum = ''
-        #         if rawPartNumbers[lowerPos[0]][i] != '.' and not rawPartNumbers[lowerPos[0]][i].isnumeric():
-        #             foundPositions.append(position)
-        #             for j in position[1]:
-        #                 pnum = pnum + rawPartNumbers[position[0]][j]
-        #         if pnum != '':
-        #             partNumbers.append(int(pnum))
-
-    # print(sum(partNumbers))
+        if len(foundNumbers) == 2:
+            gearRatios.append(int(foundNumbers[0]) * int(foundNumbers[1]))
+    
+    print(sum(gearRatios))
 
 
 if __name__ == "__main__":
